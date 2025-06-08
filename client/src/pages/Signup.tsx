@@ -16,6 +16,7 @@ import { useSignupMutation } from "@/redux/slices/api";
 import { useDispatch } from "react-redux";
 import { updateCurrentUser, updateIsLoggedIn } from "@/redux/slices/appSlice";
 
+// Schema
 const formSchema = z.object({
   username: z.string(),
   email: z.string().email(),
@@ -26,6 +27,7 @@ export default function Signup() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [signup, { isLoading }] = useSignupMutation();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -35,94 +37,75 @@ export default function Signup() {
     },
   });
 
-  async function handleSignup(values: z.infer<typeof formSchema>) {
+  const handleSignup = async (values: z.infer<typeof formSchema>) => {
     try {
       const response = await signup(values).unwrap();
-      console.log("response from signup api", response);
       dispatch(updateCurrentUser(response));
       dispatch(updateIsLoggedIn(true));
       navigate("/");
     } catch (error) {
       handleError(error);
     }
-  }
+  };
+
+  const renderField = (
+    name: "username" | "email" | "password",
+    placeholder: string,
+    type: string = "text"
+  ) => (
+    <FormField
+      control={form.control}
+      name={name}
+      render={({ field }) => (
+        <FormItem>
+          <FormControl>
+            <Input
+              {...field}
+              type={type}
+              placeholder={placeholder}
+              disabled={isLoading}
+            />
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  );
+
   return (
-    <div className="__signup grid-bg w-full h-[calc(100dvh-60px)] flex justify-center items-center flex-col gap-3">
-      <div className="__form_container  bg-slate-600 rounded-xl border-[1px] py-8 px-4 flex flex-col gap-5 w-[300px]">
-        <div className="flex flex-col justify-center items-center">
-          <h1 className="font-mono text-4xl font-bold text-left">Signup</h1>
-          <p className=" font-mono pl-3 text-xs">
-            Join the community of expert frontend developers🧑‍💻.
+    <div className="w-full">
+      <div className="flex flex-col justify-center items-center h-[100dvh]">
+        <div className="border border-slate-200 p-10 rounded-lg w-[300px]">
+          <div className="text-center mb-4 space-y-2">
+            <h1 className=" text-4xl font-bold">Signup</h1>
+            <p className=" text-xs mt-1">
+              Join the community of expert frontend developers 🧑‍💻
+            </p>
+          </div>
+
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(handleSignup)}
+              className="flex flex-col gap-3"
+            >
+              {renderField("username", "Username")}
+              {renderField("email", "Email", "email")}
+              {renderField("password", "Password", "password")}
+
+              <Button type="submit" loading={isLoading} className="w-full">
+                Signup
+              </Button>
+            </form>
+          </Form>
+
+          <p className="mt-4 text-sm text-center">
+            Already have an account?{" "}
+            <Link className="text-blue-500 hover:underline" to="/login">
+              Login
+            </Link>
           </p>
         </div>
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(handleSignup)}
-            className="flex flex-col gap-2 p-3 "
-          >
-            <FormField
-              control={form.control}
-              name="username"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Input
-                      disabled={isLoading}
-                      placeholder="Username"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Input
-                      disabled={isLoading}
-                      type="email"
-                      placeholder="Email"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Input
-                      disabled={isLoading}
-                      type="password"
-                      placeholder="Password"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <Button loading={isLoading} className="w-full" type="submit">
-              Signup
-            </Button>
-          </form>
-        </Form>
-  
       </div>
-      <p className="mt-2 text-sm">
-        Alreay have an account ?
-        <span>
-          <Link className="text-blue-500 p-3" to="/login">Login</Link>
-        </span>
-      </p>
     </div>
   );
 }

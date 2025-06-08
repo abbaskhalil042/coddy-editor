@@ -46,65 +46,69 @@ export default function Login() {
   }
 
   return (
-    <div className="__login grid-bg w-full h-[calc(100dvh-60px)] flex justify-center items-center flex-col gap-3">
-      <div className="__form_container bg-slate-600 rounded-xl  border-[1px] py-8 px-4 flex flex-col gap-5 w-[300px]">
-        <div className="flex flex-col justify-center items-center">
-          <h1 className="font-mono text-4xl font-bold text-left">Login</h1>
-          <p className="font-mono text-xs">Welcome back fellow coder 😁</p>
+    <div className="w-[100%] ">
+      <div className="  flex flex-col h-[100dvh] justify-center items-center">
+        <div className="border border-slate-200 p-3 rounded-lg">
+          <div className="flex flex-col justify-center items-center gap-3">
+            <h1 className=" text-4xl font-bold text-left">Login</h1>
+            <p className=" text-xs">Welcome back fellow coder 😁</p>
+          </div>
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(handleLogin)}
+              className="flex flex-col gap-4 p-4 mt-2 "
+            >
+              <FormField
+                control={form.control}
+                name="userId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input
+                        required
+                        disabled={isLoading}
+                        placeholder="Username or Email"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input
+                        required
+                        disabled={isLoading}
+                        type="password"
+                        placeholder="Password"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <Button loading={isLoading} className="w-full" type="submit">
+                Login
+              </Button>
+            </form>
+          </Form>
         </div>
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(handleLogin)}
-            className="flex flex-col gap-2 p-4"
-          >
-            <FormField
-              control={form.control}
-              name="userId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Input
-                      required
-                      disabled={isLoading}
-                      placeholder="Username or Email"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Input
-                      required
-                      disabled={isLoading}
-                      type="password"
-                      placeholder="Password"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <Button loading={isLoading} className="w-full" type="submit">
-              Login
-            </Button>
-          </form>
-        </Form>
-      
+
+        <p className="mt-2 text-sm">
+          Alreay have an account ?
+          <span>
+            <Link className="text-blue-500 p-3" to="/signup">
+              Signup
+            </Link>
+          </span>
+        </p>
       </div>
-      <p className="mt-2 text-sm">
-        Alreay have an account ?
-        <span>
-          <Link className="text-blue-500 p-3"  to="/login">Login</Link>
-        </span>
-      </p>
     </div>
   );
 }
